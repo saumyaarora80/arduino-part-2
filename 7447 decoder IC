@@ -1,0 +1,45 @@
+int num = 0; // count value
+void setup() {
+  // put your setup code here, to run once:
+  pinMode(4,OUTPUT); //four digit BCD output
+  pinMode(5,OUTPUT);
+  pinMode(6,OUTPUT);
+  pinMode(7,OUTPUT);
+  
+  pinMode(9,OUTPUT); // RBI pin
+  attachInterrupt(digitalPinToInterrupt(2), resetNum, FALLING); //Interrupt initialization
+//  Here the interrupt is enabled on pin-2, the ISR function assigned is resetNum and 
+//  mode is FALLING means when a falling edge occurs on pin-2, the interrupt is counted.
+  
+  digitalWrite(9,HIGH); //Set RBI to HIGH to turn ON the display
+}
+
+void loop() {
+  
+  digitalWrite(4,bitRead(num,0)); //display 4 BCD digits of number
+  digitalWrite(5,bitRead(num,1));
+  digitalWrite(6,bitRead(num,2));
+  digitalWrite(7,bitRead(num,3));
+
+  delay(1000); //1 Second Delay
+
+  digitalWrite(9, LOW); //Turn OFF seven-segment display for blinking
+  delay(500);           // 500 ms delay
+  digitalWrite(9, HIGH); //Again turn ON the display
+  
+  num = num + 1; //Count next
+  if(num == 10) //If count exceeds 9, reset to 0
+  {
+    num = 0;
+  }
+}
+
+void resetNum() { //Interrupt ISR function; Called when interrupt occurs
+  
+  num = 0; //Reset count to zero
+    
+  digitalWrite(4,bitRead(num,0)); //display reset value on display
+  digitalWrite(5,bitRead(num,1));
+  digitalWrite(6,bitRead(num,2));
+  digitalWrite(7,bitRead(num,3));
+}
